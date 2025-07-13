@@ -9,7 +9,7 @@ function App() {
         <div className="wrapper">
           <header>
             <img src="./hero.png" alt="hero banner"/>
-            <h1>Find <span className="text-gradient">movies</span> you will enjoy Without Hassle.</h1>
+            <h1>Find <span className="text-gradient">movies</span> You'll will enjoy Without Hassle.</h1>
             <Search SearchItem={SearchItem} setSearchItem={setSearchItem}/>
 
             </header>
