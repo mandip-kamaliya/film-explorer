@@ -19,16 +19,25 @@ function App() {
   const [isLoading,setisLoading] = useState(false);
 
   const fetchmovie=async ()=>{
+    setisLoading(true)
     try {
-      const endpoint=`${API_KEY}/discover/movie?sort_by=popularity.desc`
+      const endpoint =`${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+
       const response = await fetch(endpoint,API_OPTIONS);
       if(!response.ok){
          throw new Error("Failed to fetch movie")     
         }
       const data = await response.json();
+      if(data.response == "false"){
+        seterrorMessage(data.Error || "Failed to fetch data");
+        setmovieList([]);
+
+      }
       console.log(data);  
     } catch (error) {
       console.log(`Error is ${errorMessage}`)
+    }finally{
+      setisLoading(true)
     }
 
   }
