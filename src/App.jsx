@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react"
 import Search from "./components/Search.jsx"
+import Spinner from "./components/Spinner.jsx";
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY
 
@@ -31,13 +32,14 @@ function App() {
       if(data.response == "false"){
         seterrorMessage(data.Error || "Failed to fetch data");
         setmovieList([]);
-
+        return;
       }
+      setmovieList(data.results)
       console.log(data);  
     } catch (error) {
       console.error(`Error is ${error}`)
     }finally{
-      setisLoading(true)
+      setisLoading(false)
     }
 
   }
@@ -54,6 +56,22 @@ function App() {
             <Search SearchItem={SearchItem} setSearchItem={setSearchItem}/>
 
             </header>
+
+        <section className="all-movie">
+          <h2>all movie</h2>
+          {
+            isLoading?(<Spinner></Spinner>):
+            errorMessage?(<p className="text-red-500">{errorMessage}</p>):
+            (
+            <ul>
+            {movieList.map((movie)=>{
+              <p key={movie.id} className="text-white">{movie.title}</p>
+            })}
+          </ul>
+     
+          )
+          }
+          </section>    
         </div>
       
     </main>
