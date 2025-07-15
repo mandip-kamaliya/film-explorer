@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Search from "./components/Search.jsx"
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY
@@ -35,12 +35,15 @@ function App() {
       }
       console.log(data);  
     } catch (error) {
-      console.log(`Error is ${errorMessage}`)
+      console.error(`Error is ${error}`)
     }finally{
       setisLoading(true)
     }
 
   }
+  useEffect(() => {
+    fetchmovie();
+  }, []);
   return (
     <main>
       <div className="pattern"/>
