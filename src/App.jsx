@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import Search from "./components/Search.jsx"
 import Spinner from "./components/Spinner.jsx";
 import MovieCard from "./components/MovieCard.jsx";
+import { useDebounce } from "react-use";
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY
 
@@ -19,11 +20,17 @@ function App() {
   const [movieList,setmovieList]=useState([]);
   const [errorMessage,seterrorMessage]=useState("");
   const [isLoading,setisLoading] = useState(false);
+  const [debouncedSearchItem,setdebouncedSearchItem]=useState("");
 
-  const fetchmovie=async ()=>{
+  useDebounce(()=>setdebouncedSearchItem(SearchItem),500,[SearchItem])
+
+  const fetchmovie=async (query = " ")=>{
     setisLoading(true)
     try {
-      const endpoint =`${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+      const endpoint =query 
+      ?`${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`:
+ 
+      `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
 
       const response = await fetch(endpoint,API_OPTIONS);
       if(!response.ok){
@@ -45,8 +52,8 @@ function App() {
 
   }
   useEffect(() => {
-    fetchmovie();
-  }, []);
+    fetchmovie(debouncedSearchItem);
+  }, [debouncedSearchItem]);
   return (
     <main>
       <div className="pattern"/>
@@ -58,7 +65,7 @@ function App() {
 
             </header>
 
-        <section className="all-movie">
+        <section className="all-movies">
           <h2>all movie</h2>
           {
             isLoading?(<Spinner></Spinner>):
