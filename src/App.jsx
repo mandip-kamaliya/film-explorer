@@ -17,7 +17,21 @@ function App() {
   const [movieList,setmovieList]=useState([]);
   const [errorMessage,seterrorMessage]=useState("");
   const [isLoading,setisLoading] = useState(false);
-  
+
+  const fetchmovie=async ()=>{
+    try {
+      const endpoint=`${API_KEY}/discover/movie?sort_by=popularity.desc`
+      const response = await fetch(endpoint,API_OPTIONS);
+      if(!response.ok){
+         throw new Error("Failed to fetch movie")     
+        }
+      const data = await response.json();
+      console.log(data);  
+    } catch (error) {
+      console.log(`Error is ${errorMessage}`)
+    }
+
+  }
   return (
     <main>
       <div className="pattern"/>
