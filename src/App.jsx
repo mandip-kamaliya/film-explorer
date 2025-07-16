@@ -1,9 +1,11 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react"
 import Search from "./components/Search.jsx"
 import Spinner from "./components/Spinner.jsx";
 import MovieCard from "./components/MovieCard.jsx";
 import { useDebounce } from "react-use";
+import { updateSearchCount } from "../Appwrite.js";
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY
 
@@ -16,13 +18,13 @@ const API_OPTIONS = {
 }
 function App() {
 
-  const [SearchItem,setSearchItem]=useState("");
+  const [searchTerm,setsearchTerm]=useState("");
   const [movieList,setmovieList]=useState([]);
   const [errorMessage,seterrorMessage]=useState("");
   const [isLoading,setisLoading] = useState(false);
-  const [debouncedSearchItem,setdebouncedSearchItem]=useState("");
+  const [debouncedsearchTerm,setdebouncedsearchTerm]=useState("");
 
-  useDebounce(()=>setdebouncedSearchItem(SearchItem),500,[SearchItem])
+  useDebounce(()=>setdebouncedsearchTerm(searchTerm),500,[searchTerm])
 
   const fetchmovie=async (query = " ")=>{
     setisLoading(true)
@@ -43,7 +45,11 @@ function App() {
         return;
       }
       setmovieList(data.results)
-      console.log(data);  
+      updateSearchCount();
+      console.log(data); 
+         if(query && data.results.length > 0) {
+        await updateSearchCount(query, data.results[0]);
+      } 
     } catch (error) {
       console.error(`Error is ${error}`)
     }finally{
@@ -52,8 +58,8 @@ function App() {
 
   }
   useEffect(() => {
-    fetchmovie(debouncedSearchItem);
-  }, [debouncedSearchItem]);
+    fetchmovie(debouncedsearchTerm);
+  }, [debouncedsearchTerm]);
   return (
     <main>
       <div className="pattern"/>
@@ -61,7 +67,7 @@ function App() {
           <header>
             <img src="./hero.png" alt="hero banner"/>
             <h1>Find <span className="text-gradient">movies</span> You'll will enjoy Without Hassle.</h1>
-            <Search SearchItem={SearchItem} setSearchItem={setSearchItem}/>
+            <Search searchTerm={searchTerm} setsearchTerm={setsearchTerm}/>
 
             </header>
 
