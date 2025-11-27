@@ -23,6 +23,8 @@ function App() {
   const [errorMessage,seterrorMessage]=useState("");
   const [isLoading,setisLoading] = useState(false);
   const [debouncedsearchTerm,setdebouncedsearchTerm]=useState("");
+    const [trendingMovies, setTrendingMovies] = useState([]);
+
 
   useDebounce(()=>setdebouncedsearchTerm(searchTerm),500,[searchTerm])
 
@@ -57,9 +59,22 @@ function App() {
     }
 
   }
+  const loadTrendingMovies = async () => {
+    try {
+      const movies = await getTrendingMovies();
+
+      setTrendingMovies(movies);
+    } catch (error) {
+      console.error(`Error fetching trending movies: ${error}`);
+    }
+  }
+
   useEffect(() => {
     fetchmovie(debouncedsearchTerm);
   }, [debouncedsearchTerm]);
+   useEffect(() => {
+    loadTrendingMovies();
+  }, []);
   return (
     <main>
       <div className="pattern"/>
@@ -70,6 +85,20 @@ function App() {
             <Search searchTerm={searchTerm} setsearchTerm={setsearchTerm}/>
 
             </header>
+             {trendingMovies.length > 0 && (
+          <section className="trending">
+            <h2>Trending Movies</h2>
+
+            <ul>
+              {trendingMovies.map((movie, index) => (
+                <li key={movie.$id}>
+                  <p>{index + 1}</p>
+                  <img src={movie.poster_url} alt={movie.title} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <section className="all-movies">
           <h2>all movie</h2>
